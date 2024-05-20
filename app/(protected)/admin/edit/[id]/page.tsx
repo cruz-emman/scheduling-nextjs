@@ -441,7 +441,7 @@ const EditPage = ({ params }: EditPostPage) => {
           <FormField
             control={form.control}
             name="meetingTypeOption"
-            defaultValue={dataEvent?.meetingTypeOption}
+            defaultValue={watchEvent}
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>Type of Service</FormLabel>
