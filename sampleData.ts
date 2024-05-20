@@ -424,3 +424,14 @@ export const timeAM = [
       icon: ArrowUpIcon,
     },
   ]
+
+  export const doesHaveTCETAssitanceOptions = [
+    {
+      id: "tcet",
+      label: "TCET",
+    },
+    {
+      id: "others",
+      label: "Others",
+    },
+  ];

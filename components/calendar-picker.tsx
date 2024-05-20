@@ -120,7 +120,7 @@ export function CalendarPicker() {
   const [meetingType, setMeetingType] = useState("meeting"); // Optional
   const [confirmAgreement, setConfirmAgreement] = useState(false);
 
-const [dialogBox, setDialogBox] = useState(false);
+  const [dialogBox, setDialogBox] = useState(false);
 
   const [currentFormPage, setCurrentFormPage] = useState(0);
   const [previousStep, setPreviousStep] = useState(0);
@@ -137,7 +137,7 @@ const [dialogBox, setDialogBox] = useState(false);
       purpose: "",
       startingTime: "",
       endingTime: "",
-      doesHaveDryRun: "no",
+      doesHaveDryRun: false,
       dryRunDate: "",
       dryRunStart: "",
       dryRunEnd: "",
@@ -168,7 +168,7 @@ const [dialogBox, setDialogBox] = useState(false);
   });
 
   const processForm = (values: z.infer<typeof formSchemaData>) => {
-    console.log(values)
+    console.log(values);
     createPost(values);
 
     form.reset();
@@ -471,20 +471,19 @@ const [dialogBox, setDialogBox] = useState(false);
                       render={({ field }) => (
                         <FormItem className="space-y-3">
                           <FormLabel>
-                            (Optional) Preffered Meeting Date / Dry Run
+                            (Optional) Preferred Meeting Date / Dry Run
                           </FormLabel>
                           <FormControl>
                             <RadioGroup
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}
+                              onValueChange={(value) =>
+                                field.onChange(value === "true")
+                              }
+                              defaultValue={String(field.value)}
                               className="flex flex-col space-y-1"
                             >
                               <FormItem className="flex items-center space-x-3 space-y-0">
                                 <FormControl>
-                                  <RadioGroupItem
-                                    onClick={handleClick}
-                                    value="no"
-                                  />
+                                  <RadioGroupItem value="false" />
                                 </FormControl>
                                 <FormLabel className="font-normal">
                                   None / No
@@ -492,7 +491,7 @@ const [dialogBox, setDialogBox] = useState(false);
                               </FormItem>
                               <FormItem className="flex items-center space-x-3 space-y-0">
                                 <FormControl>
-                                  <RadioGroupItem value="yes" />
+                                  <RadioGroupItem value="true" />
                                 </FormControl>
                                 <FormLabel className="font-normal">
                                   Yes
@@ -501,7 +500,7 @@ const [dialogBox, setDialogBox] = useState(false);
                             </RadioGroup>
                           </FormControl>
 
-                          {hasDryRun === "yes" && (
+                          {field.value === true && (
                             <FormItem>
                               <div className="flex flex-col gap-2 pt-2">
                                 <Label>(Dry Run) Time of Event</Label>
@@ -536,8 +535,6 @@ const [dialogBox, setDialogBox] = useState(false);
                                             className="w-auto p-0"
                                             align="start"
                                           >
-                                            {/* Customized Calendar */}
-
                                             <Calendar
                                               mode="single"
                                               disabled={(date) =>
@@ -609,7 +606,8 @@ const [dialogBox, setDialogBox] = useState(false);
                                               ])
                                             : field.onChange(
                                                 field.value?.filter(
-                                                  (value:any) => value !== item.id
+                                                  (value: any) =>
+                                                    value !== item.id
                                                 )
                                               );
                                         }}

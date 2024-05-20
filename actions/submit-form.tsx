@@ -3,7 +3,7 @@
 import * as z from 'zod'
 
 import { db } from "@/lib/db";
-import { formSchemaData } from "@/lib/schema";
+import { Events, formSchemaData } from "@/lib/schema";
 import { getDataById } from '@/data-query/appointment';
 
 export const submitForm = async (
@@ -74,8 +74,7 @@ export const submitForm = async (
 
 
  export const updateForm = async (
-    values: z.infer<typeof formSchemaData>,
-    id: string
+    { values, id }: { values: Events, id: string }
 ) => {
     const validatedFields = formSchemaData.safeParse(values)
 

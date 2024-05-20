@@ -35,9 +35,10 @@ export const formSchemaData = z.object({
     }),
   
     // Set 3
-    doesHaveDryRun:  z.enum(["yes", "no"], {
-      required_error: "Please select if yes or not"
+    doesHaveDryRun: z.boolean({
+      required_error: "Please select if yes or no"
     }),
+  
     dryRunDate: z.string().optional(),
     dryRunStart: z.string().optional(),
     dryRunEnd: z.string().optional(),
@@ -57,7 +58,7 @@ export const formSchemaData = z.object({
     
   
   }).superRefine(({ doesHaveDryRun, dryRunDate, dryRunStart, dryRunEnd, doesHaveTCETAssitance, tcetOtherAssitance, meetingTypeServices, meetingTypeServiceLink, meetingTypeOption, cameraSetup}, ctx) => {
-    if (doesHaveDryRun === 'yes') {
+    if (doesHaveDryRun === true) {
       if (!dryRunDate) {
         ctx.addIssue({
           code: 'custom',
@@ -137,6 +138,13 @@ export const RegisterSchema = z.object({
       message: "Name is Required"
   })
 })
+
+export const titleSchema  = z.object({
+  title: z.string(),
+  category: z.string().optional()
+})
+
+export type Title = z.infer<typeof titleSchema>
 
 
 export type Events = z.infer<typeof formSchemaData>

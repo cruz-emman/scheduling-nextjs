@@ -42,7 +42,7 @@ model AppoinmentSchedule {
   startingTime String
   endingTime String
   purpose String
-  doesHaveDryRun String
+  doesHaveDryRun Boolean
   dryRunDate String?
   dryRunStart String?
   dryRunEnd String?
@@ -56,4 +56,10 @@ model AppoinmentSchedule {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt 
+}
+
+model TitleSample {
+  id String @id @default(cuid())
+  title String
+  category String
 }

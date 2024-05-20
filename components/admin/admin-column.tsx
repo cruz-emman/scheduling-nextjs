@@ -132,7 +132,7 @@ export const columns: ColumnDef<Events>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
             <DropdownMenuItem
-              onClick={() => router.push(`/admin/id/${data.id}`)}
+              onClick={() => router.push(`/admin/edit/${data.id}`)}
             >
               <PanelRightCloseIcon className="mr-2 h-4 w-4" />
               View Details

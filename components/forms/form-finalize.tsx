@@ -45,7 +45,7 @@ const FinalizeForm = ({ data }: FinalizeFormProps) => {
         <div className="flex flex-col gap-y-2">
           <div className="flex flex-col gap-y-2">
             <p className="font-semibold text-gray-600">General Information</p>
-            {generalInformations.map((item: any, index: number) => (
+            {generalInformations.map((item: any, index: number) => ( 
               <div
                 key={index}
                 className="flex w-full uppercase  items-center gap-x-2"

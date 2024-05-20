@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 interface PurposeOption {
     id: string;
@@ -27,6 +28,9 @@ type SelectFieldGroup = {
     placeholder: string,
     data: PurposeOption[]; // Use the interface from option 1 here
     control: any
+    defaultValue?: any
+    className?: any
+
 }
 
 const SelectFieldInput = ({
@@ -34,15 +38,18 @@ const SelectFieldInput = ({
     name,
     label,
     placeholder,
-    data
+    data,
+    defaultValue,
+    className
 } : SelectFieldGroup) => {
   return (
     <>
       <FormField
         control={control}
         name={name}
+        defaultValue={defaultValue}
         render={({ field }) => (
-          <FormItem>
+          <FormItem className={cn(className)}>
             <FormLabel>{label}</FormLabel>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>

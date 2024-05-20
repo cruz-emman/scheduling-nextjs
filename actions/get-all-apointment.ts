@@ -20,7 +20,7 @@ export async function getDataNotDryRun(): Promise<Events[]>{
   try {
     const data = await db.appoinmentSchedule.findMany({
       where: {
-        doesHaveDryRun: 'no'
+        doesHaveDryRun: false
       }
     });
 
@@ -35,7 +35,7 @@ export async function getDataHastDryRun(): Promise<Events[]>{
   try {
     const data = await db.appoinmentSchedule.findMany({
       where: {
-        doesHaveDryRun: 'yes'
+        doesHaveDryRun: true
       }
     });
 
@@ -45,16 +45,3 @@ export async function getDataHastDryRun(): Promise<Events[]>{
   }
 }
 
-export async function getSingleEvent(id:any){
-  try {
-    const data = await db.appoinmentSchedule.findUnique({
-      where: {
-        id: id
-      }
-    })
-
-    return data
-  } catch (error) {
-    throw error
-  }
-}
