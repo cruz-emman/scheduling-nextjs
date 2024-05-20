@@ -36,7 +36,7 @@ export type Events = {
 
   purpose: string;
 
-  doesHaveDryRun: string;
+  doesHaveDryRun: boolean;
   dryRunDate?: string | null; // Optional
   dryRunStart?: string | null; // Optional
   dryRunEnd?: string | null; // Optional

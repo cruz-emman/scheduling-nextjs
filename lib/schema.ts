@@ -115,6 +115,8 @@ export const formSchemaData = z.object({
 });
   
 
+export type Events = z.infer<typeof formSchemaData>
+
 
 export const LoginSchema = z.object({
   email: z.string().email({
@@ -147,4 +149,3 @@ export const titleSchema  = z.object({
 export type Title = z.infer<typeof titleSchema>
 
 
-export type Events = z.infer<typeof formSchemaData>

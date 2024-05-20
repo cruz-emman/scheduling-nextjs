@@ -10,7 +10,7 @@ export async function getData(): Promise<Events[]> {
   
       return data;
     } catch (error) {
-      return []; // Return an empty array in case of an error
+      throw error
     }
 }
 
@@ -26,7 +26,7 @@ export async function getDataNotDryRun(): Promise<Events[]>{
 
     return data;
   } catch (error) {
-    return []; // Return an empty array in case of an error
+    throw error
   }
 }
 
@@ -41,7 +41,7 @@ export async function getDataHastDryRun(): Promise<Events[]>{
 
     return data;
   } catch (error) {
-    return []; // Return an empty array in case of an error
+   throw error
   }
 }
 
