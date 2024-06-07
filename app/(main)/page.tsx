@@ -5,7 +5,10 @@ import { Separator } from "@/components/ui/separator";
 import { sampleEvent } from "@/sampleData";
 import React from "react";
 
-export default function Home() {
+
+
+export default async function  Home() {
+
   return (
     <div className="w-full px-8 ">
       <div className="flex gap-x-2 ">
@@ -16,7 +19,7 @@ export default function Home() {
         <div className="flex flex-col flex-1 w-full">
             <h1 className="text-lg font-semibold text-gray-400">Event Today</h1>
             <div className="h-full flex max-h-[650px] overflow-y-auto flex-col gap-y-2 flex-grow ">
-              <CardEvent data={sampleEvent} />
+              {/* <CardEvent data={dryRunEvent} /> */}
             </div>
           </div>
           <Separator orientation="vertical" />
@@ -24,7 +27,7 @@ export default function Home() {
           <div className="flex flex-col flex-1 w-full ">
             <h1 className="text-lg font-semibold text-gray-400">Dry Run</h1>
             <div className="h-full flex max-h-[650px] overflow-y-auto flex-col gap-y-2 flex-grow ">
-              <CardEvent data={sampleEvent} />
+              {/* <CardEvent data={noDryRun} /> */}
             </div>
           </div>
         </div>

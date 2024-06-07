@@ -1,12 +1,19 @@
 import React from "react";
-import { DataTable } from "@/components/admin/admin-data-table";
-import { Events, columns } from "@/components/admin/admin-column";
+
 import { db } from "@/lib/db";
 import { getData } from "@/data-query/appointment";
+import { DataTable } from "./datatable/admin-data-table";
+import { columnDashboard } from "./datatable/admin-column";
 
 
 export const AdminList = async () => {
   const data = await getData();
+  
 
-  return <DataTable columns={columns} data={data} />;
+
+  return (
+    <>
+     <DataTable columns={columnDashboard} data={data} />
+    </>
+  );
 };

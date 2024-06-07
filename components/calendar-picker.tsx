@@ -147,13 +147,13 @@ export function CalendarPicker() {
       meetingTypeServices: [],
       meetingTypeServiceLink: "",
       cameraSetup: "",
+      status: 'pending'
     },
   });
 
   const router = useRouter();
 
-  const [error, setError] = useState<string | undefined>("");
-  const [success, setSuccess] = useState<string | undefined>("");
+
   // const [isPending, startTransition] = useTransition();
 
   const { mutate: createPost, isPending: isPending } = useMutation({
@@ -235,7 +235,7 @@ export function CalendarPicker() {
           value: watch[2],
         },
         {
-          label: "Department: ",
+          label: "College / Unit: ",
           value: watch[3],
         },
         {
@@ -316,7 +316,6 @@ export function CalendarPicker() {
     }
   };
 
-  let hasDryRun = form.watch("doesHaveDryRun");
   let hasOtherAssistance = form.watch("doesHaveTCETAssitance");
 
   const handleClick = () => {
@@ -344,7 +343,6 @@ export function CalendarPicker() {
   };
 
   let watchChoices = form.watch(["meetingTypeServices"]);
-  let watchChoices1 = form.watch(["meetingTypeOption"]);
 
   const handleSubmit = () => {
     form.handleSubmit(processForm)();
@@ -415,7 +413,7 @@ export function CalendarPicker() {
                     <FormInputField
                       control={form.control}
                       name="department"
-                      label="Department"
+                      label="College / Unit"
                       type="text"
                       placeholder="ex. tcet,..."
                     />
@@ -483,7 +481,10 @@ export function CalendarPicker() {
                             >
                               <FormItem className="flex items-center space-x-3 space-y-0">
                                 <FormControl>
-                                  <RadioGroupItem value="false" />
+                                  <RadioGroupItem
+                                                          onClick={handleClick}
+
+                                  value="false" />
                                 </FormControl>
                                 <FormLabel className="font-normal">
                                   None / No

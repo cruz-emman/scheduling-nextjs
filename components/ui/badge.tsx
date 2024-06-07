@@ -16,6 +16,8 @@ const badgeVariants = cva(
           "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
         outline: "text-foreground",
         approved:
+          "border-transparent bg-teal-500 text-primary-foreground hover:bg-teal-500/80",
+        done:
           "border-transparent bg-emerald-500 text-primary-foreground hover:bg-emerald-500/80",
 
         meeting:

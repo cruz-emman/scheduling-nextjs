@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
-import { DataTable } from "./admin-data-table";
-import {  columnsEvent } from "./admin-column";
+import { DataTable } from "./datatable/admin-data-table";
+import {  columnsEvent } from "./datatable/admin-column";
 import { sampleEvent } from "@/sampleData";
 import {
   getData,

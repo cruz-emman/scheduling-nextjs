@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/table";
 import { DataTableToolbar } from "./admin-data-toolbar";
 import { DataTablePagination } from "./admin-data-table-pagination";
+import { filterByMonth } from "@/lib/date-between-filter";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -34,6 +35,8 @@ export function DataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
+
+
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -42,9 +45,14 @@ export function DataTable<TData, TValue>({
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
+
+
+
+
   const table = useReactTable({
     data,
     columns,
+    
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
@@ -53,13 +61,16 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    filterFns: {
+      filterByMonth: filterByMonth,
+
+    },
     initialState: {
       pagination: {
           pageSize: 5,
       },
   },
-
-    state: {
+  state: {
       sorting,
       columnFilters,
       columnVisibility,
@@ -70,7 +81,10 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
+ 
       <DataTableToolbar table={table} />
+
+
       <div className="flex items-center py-4">
       </div>
       <div className="rounded-md border">

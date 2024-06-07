@@ -7,15 +7,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 type Event = {
-  id: number;
   title: string;
-  unit: string;
-  type_of_event: string;
-  date: string;
-  type_of_service: string[];
+  department: string;
+  dateOfEvent: string;
+  startingTime: string;
+  endingTime: string;
+  meetingTypeOption: string;
 };
 
 type Props = {
@@ -25,20 +26,23 @@ type Props = {
 export const CardEvent = ({ data }: Props) => {
   return (
     <>
-      {data.map((event) => (
-        <Card key={event.id}>
-          <CardHeader>
-            <CardTitle>{event.title}</CardTitle>
-            <CardDescription>{event.unit}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p>{event.type_of_event}</p>
-            <p>{event.date}</p>
-            <p>{event.type_of_service.join(", ")}</p>
-          </CardContent>
-         
-        </Card>
-      ))}
+      {data.map((event) => {
+       
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle
+              className={cn('text-xl')}
+              >{event.title}</CardTitle>
+              <CardDescription>{event.department}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="font-semibold text-gray-400">{event.startingTime} <span className="font-bold">-</span>{event.endingTime}</p>
+              <Badge>{event.meetingTypeOption}</Badge>
+            </CardContent>
+          </Card>
+        );
+      })}
     </>
   );
 };

@@ -33,7 +33,6 @@ export async function PATCH(req: Request, data: DataProps){
         const {params} = data
         const body = await req.json()
         
-        console.log(params.id)
 
         await db.appoinmentSchedule.update({
             where: {

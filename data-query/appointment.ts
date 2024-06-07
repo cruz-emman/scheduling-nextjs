@@ -1,23 +1,29 @@
 'use server'
 
+import { Events } from "@/components/admin/datatable/admin-column";
 import { db } from "@/lib/db";
-import { Events } from "@/components/admin/admin-column";
-
-
-export const getAllSchedule = async () =>{
-    try {
-        const data = await db.appoinmentSchedule.findMany()
-        return data
-    } catch (error) {
-      throw error
-    }
-}
-
 
 
 export async function getData(): Promise<Events[]> {
     try {
-      const data = await db.appoinmentSchedule.findMany();
+      const data = await db.appoinmentSchedule.findMany({
+        where: {
+          NOT: {
+            OR: [
+              {status: 'done'},
+              {softDelete: true}
+            ]            
+          },
+          
+        },
+        include: {
+          user: {
+            select: {
+              name: true
+            }
+          }
+      }
+      });
   
       return data;
     } catch (error) {
@@ -31,7 +37,10 @@ export async function getDataNotDryRun(): Promise<Events[]>{
   try {
     const data = await db.appoinmentSchedule.findMany({
       where: {
-        doesHaveDryRun: false
+        doesHaveDryRun: false,
+        NOT: {
+          softDelete: true
+        },
       }
     });
 
@@ -46,7 +55,10 @@ export async function getDataHastDryRun(): Promise<Events[]>{
   try {
     const data = await db.appoinmentSchedule.findMany({
       where: {
-        doesHaveDryRun: true
+        doesHaveDryRun: true,
+        NOT: {
+          softDelete: true
+        },
       }
     });
 
@@ -59,7 +71,38 @@ export async function getDataHastDryRun(): Promise<Events[]>{
 export async function getDataById(id: any){
   try {
     const data = await db.appoinmentSchedule.findFirst({
-      where: { id:id }
+      where: { 
+        id:id,
+        NOT: {
+          softDelete: true
+        }, 
+      }
+    })
+
+    return data
+  } catch (error) {
+    throw error
+  }
+}
+
+
+
+
+
+// table only consist of done and cancel
+export async function getTableResult(){
+  try {
+    const data = await db.appoinmentSchedule.findMany({
+      where: {
+       OR: [
+        {
+          status: 'done'
+        },
+        {
+          status: 'cancel'
+        }
+       ]
+      }
     })
 
     return data

@@ -39,6 +39,9 @@ export function DataTableFacetedFilter<TData, TValue>({
   const facets = column?.getFacetedUniqueValues()
   const selectedValues = new Set(column?.getFilterValue() as string[])
 
+
+
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -98,6 +101,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                         selectedValues.add(option.value)
                       }
                       const filterValues = Array.from(selectedValues)
+                      console.log(filterValues)
                       column?.setFilterValue(
                         filterValues.length ? filterValues : undefined
                       )

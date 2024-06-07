@@ -99,15 +99,8 @@ export const AdminContainer = () => {
             </Card>
           </div>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <Card className="col-span-3">
-              <CardHeader>
-                <CardTitle>Overview</CardTitle>
-              </CardHeader>
-              <CardContent className="pl-2">
-                <AdminOverView />
-              </CardContent>
-            </Card>
-            <Card className="col-span-4">
+
+            <Card className="col-span-7">
               <CardHeader>
                 <CardTitle>Incoming</CardTitle>
                 <CardDescription>Upcoming events this month.</CardDescription>

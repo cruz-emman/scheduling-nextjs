@@ -26,6 +26,7 @@ interface SelectGroupFieldProps {
   label: string;
   defaultValue?: any
   className?: any
+  disabled?: any
 }
 
 const SeletGroupFieldInput = ({
@@ -34,7 +35,8 @@ const SeletGroupFieldInput = ({
   placeholder,
   label,
   defaultValue,
-  className
+  className,
+  disabled
 }: SelectGroupFieldProps) => {
   return (
     <>
@@ -45,7 +47,9 @@ const SeletGroupFieldInput = ({
         render={({ field }) => (
           <FormItem className={cn(className)}>
             <FormLabel>{label}</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <Select 
+              disabled={disabled}
+            onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder={placeholder} />

@@ -34,7 +34,8 @@ export const submitForm = async (
         meetingTypeOption,
         meetingTypeServices,
         meetingTypeServiceLink,
-        cameraSetup
+        cameraSetup,
+        status
 
     } = validatedFields.data
 
@@ -62,7 +63,8 @@ export const submitForm = async (
                 meetingTypeOption,
                 meetingTypeServices: meetingTypeServicesToString,
                 meetingTypeServiceLink,
-                cameraSetup
+                cameraSetup,
+                status
             }
         })
 
@@ -105,7 +107,8 @@ export const submitForm = async (
         meetingTypeOption,
         meetingTypeServices,
         meetingTypeServiceLink,
-        cameraSetup
+        cameraSetup,
+        status
 
     } = validatedFields.data
 
@@ -136,7 +139,8 @@ export const submitForm = async (
                 meetingTypeOption,
                 meetingTypeServices: meetingTypeServicesToString,
                 meetingTypeServiceLink,
-                cameraSetup
+                cameraSetup,
+                status
             }
         })
 

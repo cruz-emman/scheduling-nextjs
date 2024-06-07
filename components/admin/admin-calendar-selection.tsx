@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 
-import { DataTable } from "./admin-data-table";
-import { columns } from "./admin-column";
+import { DataTable } from "./datatable/admin-data-table";
+import { columns } from "./datatable/admin-column";
 import { Calendar } from "../ui/calendar";
 export const AdminCalendarSelection = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());

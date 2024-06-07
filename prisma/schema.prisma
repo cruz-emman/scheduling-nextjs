@@ -29,6 +29,8 @@ model User {
   email String @unique
   password String?
   role UserRole @default(USER)
+
+  appointment AppoinmentSchedule[]
 }
 
 model AppoinmentSchedule {
@@ -52,7 +54,10 @@ model AppoinmentSchedule {
   meetingTypeServices String
   meetingTypeServiceLink String?
   cameraSetup String?
-  status AppointmentStatus @default(PENDING)
+  status String
+  softDelete Boolean @default(false)
+
+  user User[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt 

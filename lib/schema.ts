@@ -55,6 +55,10 @@ export const formSchemaData = z.object({
     }),
     meetingTypeServiceLink: z.string().optional(),
     cameraSetup: z.string().optional(),
+
+    //status
+    status:z.enum(['approved','pending','cancel','done']).default('pending')
+    
     
   
   }).superRefine(({ doesHaveDryRun, dryRunDate, dryRunStart, dryRunEnd, doesHaveTCETAssitance, tcetOtherAssitance, meetingTypeServices, meetingTypeServiceLink, meetingTypeOption, cameraSetup}, ctx) => {

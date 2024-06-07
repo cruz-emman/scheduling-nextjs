@@ -1,10 +1,10 @@
 "use client";
 
 import { updateForm } from "@/actions/submit-form";
-import { CheckboxFieldInputAdmin } from "@/components/forms/admin-checkbox-input";
 import SelectFieldInput from "@/components/forms/form-select";
 import SeletGroupFieldInput from "@/components/forms/form-select-group";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
@@ -15,6 +15,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
@@ -24,7 +31,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getDataById } from "@/data-query/appointment";
-import { Events, Title, formSchemaData, titleSchema } from "@/lib/schema";
+import { Events, formSchemaData } from "@/lib/schema";
+import { cn } from "@/lib/utils";
 import {
   doesHaveTCETAssitanceOptions,
   hybridChoice,
@@ -35,11 +43,12 @@ import {
   zoomWebinarChoice,
 } from "@/sampleData";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { format, parse } from "date-fns";
+import { CalendarIcon, TriangleAlert } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 interface EditPostPage {
@@ -56,6 +65,8 @@ const EditPage = ({ params }: EditPostPage) => {
     queryKey: ["edit", id],
     queryFn: async () => {
       const res = await getDataById(id);
+      router.refresh();
+
       return res;
     },
   });
@@ -67,7 +78,7 @@ const EditPage = ({ params }: EditPostPage) => {
       console.error("Update failed:", error);
     },
     onSuccess: () => {
-      router.push("/");
+      router.push("/admin");
       router.refresh();
     },
   });
@@ -96,13 +107,20 @@ const EditPage = ({ params }: EditPostPage) => {
     const updatedValues = form.getValues();
 
     // Perform the update or submission with updated values
-    //pdateEvent({ values: updatedValues, id });
-
-    console.log(updatedValues);
+    updateEvent({ values: updatedValues, id });
   };
 
   const onError = (error: any) => {
     console.log(error);
+  };
+
+  const handleClick = () => {
+    form.resetField("dryRunDate");
+    form.setValue("dryRunStart", undefined);
+    form.setValue("dryRunEnd", undefined);
+
+    // form.resetField("dryRunStart");
+    // form.resetField("dryRunEnd");
   };
 
   const formatDate = (data: any) => {
@@ -119,36 +137,39 @@ const EditPage = ({ params }: EditPostPage) => {
   };
 
   let FormattedDate = formatDate(dataEvent?.dateOfEvent);
-  let dryRunFormattedDate = formatDate(dataEvent?.dryRunDate);
+  let dryRunFormattedDate = formatDate(dataEvent?.dryRunDate) || "";
 
-  const currentMeetingType = dataEvent?.meetingTypeOption;
   const tcetAssitanceArray = dataEvent?.doesHaveTCETAssitance.split(",");
   const meetingTypeServicesArray = dataEvent?.meetingTypeServices.split(",");
 
-  const typeOfMeeting = (meetingType: string | undefined) => {
-    if (meetingType === "meeting") {
-      return meetingType;
-    }
-    if (meetingType === "webinar") {
-      return meetingType;
-    }
-    if (meetingType === "hybrid") {
-      return meetingType;
-    }
-    if (meetingType === "documentation") {
-      return meetingType;
-    }
-    if (meetingType === "training") {
-      return meetingType;
-    }
-  };
+  let watchEvent = form.watch("meetingTypeOption");
+  let watchDryRunEvent = form.watch("doesHaveDryRun");
 
-  let watchEvent = form.watch('meetingTypeOption')
-  console.log(watchEvent)
-
+  const intialValue = dataEvent?.meetingTypeOption;
+  const initalServices = dataEvent?.meetingTypeServices.split(",");
 
   const meetingTypeOnchange = (data: any) => {
+    if (intialValue === data) {
+      const meetingTypeServicesValue = initalServices ? [initalServices] : [];
+      form.setValue("meetingTypeServices", meetingTypeServicesValue[0]);
+    } else {
+      form.setValue("meetingTypeServices", []);
+    }
     form.setValue("meetingTypeOption", data);
+  };
+
+  const [optionalDate, setOptionalDate] = useState<Date | undefined>(
+    new Date()
+  );
+
+  const convertDateToString = (currentDate: Date | undefined) => {
+    if (currentDate) {
+      setOptionalDate(currentDate);
+      const dryRunDate = currentDate ? currentDate.toLocaleDateString() : ""; // Convert Date to string
+      form.setValue("dryRunDate", dryRunDate); // Set the value of dateOfEvent field in the form
+    } else {
+      setOptionalDate(currentDate);
+    }
   };
 
   if (isLoadingEvent) {
@@ -165,6 +186,51 @@ const EditPage = ({ params }: EditPostPage) => {
         onSubmit={form.handleSubmit(onEdit, onError)}
       >
         <div className="flex flex-col gap-y-2 w-full">
+          <FormField
+            control={form.control}
+            name="status"
+            defaultValue={
+              dataEvent?.status as "approved" | "pending" | "done" | "cancel"
+            }
+            render={({ field }) => (
+              <FormItem>
+                <div
+                  className={cn(
+                    "w-full gap-x-2 rounded-md shadow-md flex items-center justify-start p-3",
+                    {
+                      "bg-green-200 text-green-800":
+                        dataEvent?.status === "approved",
+                      "bg-red-200 text-red-800": dataEvent?.status === "cancel",
+                      "bg-yellow-200 text-yellow-800":
+                        dataEvent?.status === "pending",
+                      "bg-violet-200 text-violet-800":
+                        dataEvent?.status === "done",
+                    }
+                  )}
+                >
+                  <p>{dataEvent?.status}</p>
+                </div>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="done">Done</SelectItem>
+                    <SelectItem value="approved">Approved</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="cancel">Cancel</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <p className="text-xl font-semibold">General Information</p>
           <FormField
             control={form.control}
@@ -304,70 +370,119 @@ const EditPage = ({ params }: EditPostPage) => {
 
         <div className="flex flex-col gap-y-2 w-full">
           <p className="text-xl font-semibold">Additional Information</p>
-          <FormField
-            control={form.control}
-            name="doesHaveDryRun"
-            defaultValue={dataEvent?.doesHaveDryRun}
-            render={({ field }) => (
-              <FormItem className="space-y-3">
-                <FormLabel>
-                  (Optional) Preffered Meeting Date / Dry Run
-                </FormLabel>
-                <FormControl>
-                  <RadioGroup
-                    onValueChange={(value) => field.onChange(value === "true")}
-                    defaultValue={String(field.value)}
-                    className="flex flex-col space-y-1"
-                  >
-                    <FormItem className="flex items-center space-x-3 space-y-0">
-                      <FormControl>
-                        <RadioGroupItem value="false" />
-                      </FormControl>
-                      <FormLabel className="font-normal">None / No</FormLabel>
-                    </FormItem>
-                    <FormItem className="flex items-center space-x-3 space-y-0">
-                      <FormControl>
-                        <RadioGroupItem value="true" />
-                      </FormControl>
-                      <FormLabel className="font-normal">Yes</FormLabel>
-                    </FormItem>
-                  </RadioGroup>
-                </FormControl>
-              </FormItem>
-            )}
-          />
 
           <div className="flex flex-row gap-x-2">
             <FormField
               control={form.control}
-              name="dryRunDate"
-              defaultValue={dryRunFormattedDate}
+              name="doesHaveDryRun"
+              defaultValue={dataEvent?.doesHaveDryRun}
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Dry Run Date</FormLabel>
+                <FormItem className="space-y-3">
+                  <FormLabel>
+                    (Optional) Preferred Meeting Date / Dry Run
+                  </FormLabel>
                   <FormControl>
-                    <Input type="date" placeholder="Dry Run Date" {...field} />
+                    <RadioGroup
+                      onValueChange={(value) =>
+                        field.onChange(value === "true")
+                      }
+                      defaultValue={String(field.value)}
+                      className="flex flex-col space-y-1"
+                    >
+                      <FormItem className="flex items-center space-x-3 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem onClick={handleClick} value="false" />
+                        </FormControl>
+                        <FormLabel className="font-normal">None / No</FormLabel>
+                      </FormItem>
+                      <FormItem className="flex items-center space-x-3 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="true" />
+                        </FormControl>
+                        <FormLabel className="font-normal">Yes</FormLabel>
+                      </FormItem>
+                    </RadioGroup>
                   </FormControl>
+
+                  {field.value === true && (
+                    <FormItem>
+                      <div className="flex flex-col gap-2 pt-2">
+                        <Label>(Dry Run) Time of Event</Label>
+                        <div className="flex flex-col gap-2">
+                          <FormField
+                            control={form.control}
+                            defaultValue={dryRunFormattedDate || ""}
+                            name="dryRunDate"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-col">
+                                <FormLabel>Date</FormLabel>
+                                <Popover>
+                                  <PopoverTrigger asChild>
+                                    <FormControl>
+                                      <Button
+                                        variant={"outline"}
+                                        className={cn(
+                                          "w-[240px] pl-3 text-left font-normal",
+                                          !field.value &&
+                                            "text-muted-foreground"
+                                        )}
+                                      >
+                                        {field.value ? (
+                                          format(field.value, "PPP")
+                                        ) : (
+                                          <span>Pick a date</span>
+                                        )}
+                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                      </Button>
+                                    </FormControl>
+                                  </PopoverTrigger>
+                                  <PopoverContent
+                                    className="w-auto p-0"
+                                    align="start"
+                                  >
+                                    <Calendar
+                                      mode="single"
+                                      disabled={(date) =>
+                                        new Date(date) <= new Date()
+                                      } // Disable past dates and today's date
+                                      selected={optionalDate}
+                                      onSelect={convertDateToString}
+                                      initialFocus
+                                    />
+                                  </PopoverContent>
+                                </Popover>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <SeletGroupFieldInput
+                            name="dryRunStart"
+                            placeholder="Dry Run Start."
+                            control={form.control}
+                            disabled={!watchDryRunEvent}
+                            label="Start"
+                            defaultValue={dataEvent?.dryRunStart || ""}
+                            className={`w-40`}
+                          />
+
+                          <SeletGroupFieldInput
+                            name="dryRunEnd"
+                            placeholder="Dry Run End"
+                            control={form.control}
+                            disabled={!watchDryRunEvent}
+                            label="End"
+                            defaultValue={dataEvent?.dryRunEnd || ""}
+                            className={`w-40`}
+                          />
+                        </div>
+                      </div>
+                    </FormItem>
+                  )}
+
                   <FormMessage />
                 </FormItem>
               )}
-            />
-            <SeletGroupFieldInput
-              name="dryRunStart"
-              placeholder="Dry Run Start."
-              control={form.control}
-              label="Start"
-              defaultValue={dataEvent?.dryRunStart}
-              className={`w-40`}
-            />
-
-            <SeletGroupFieldInput
-              name="dryRunEnd"
-              placeholder="Dry Run End"
-              control={form.control}
-              label="End"
-              defaultValue={dataEvent?.dryRunEnd}
-              className={`w-40`}
             />
           </div>
         </div>
@@ -441,7 +556,15 @@ const EditPage = ({ params }: EditPostPage) => {
           <FormField
             control={form.control}
             name="meetingTypeOption"
-            defaultValue={watchEvent}
+            defaultValue={
+              dataEvent?.meetingTypeOption as
+                | "meeting"
+                | "webinar"
+                | "hybrid"
+                | "documentation"
+                | "training"
+                | undefined
+            }
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>Type of Service</FormLabel>
@@ -470,12 +593,6 @@ const EditPage = ({ params }: EditPostPage) => {
 
           {watchEvent === "meeting" && (
             <>
-              {/* <CheckboxFieldInputAdmin
-                control={form.control}
-                name="meetingTypeServices"
-                data={zoomMeetingChoice}
-                defaultValue={dataEvent?.meetingTypeServices as string[] | undefined}
-              /> */}
               <FormField
                 control={form.control}
                 name="meetingTypeServices"
@@ -659,7 +776,7 @@ const EditPage = ({ params }: EditPostPage) => {
             </>
           )}
 
-          {watchEvent=== "documentation" && (
+          {watchEvent === "documentation" && (
             <>
               <FormField
                 control={form.control}
