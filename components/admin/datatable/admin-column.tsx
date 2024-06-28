@@ -42,9 +42,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "./admin-data-column-header";
 import { Badge } from "@/components/ui/badge";
 import { usePathname, useRouter } from "next/navigation";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { DropdownMenuSub } from "@radix-ui/react-dropdown-menu";
+import { useToast } from "@/components/ui/use-toast";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 
@@ -130,6 +131,7 @@ export const columnDashboard: ColumnDef<Events>[] = [
   },
   {
     accessorKey: "dateOfEvent",
+    header: 'Date of Event',
     cell: ({ row }) => {
       const dateEvent = row.original.dateOfEvent;
       return format(new Date(dateEvent), "dd/MM/yyyy");
@@ -142,6 +144,18 @@ export const columnDashboard: ColumnDef<Events>[] = [
   {
     accessorKey: "doesHaveDryRun",
     header: "Dry Run",
+    cell: ({row}) => {
+      const hasDryRun = row.original.doesHaveDryRun
+      return(
+        <>
+        {hasDryRun === true ? (
+          <Badge variant="approved">Yes</Badge>
+        ): (
+          <Badge variant="destructive">No</Badge>
+        )}
+        </>
+      )
+    }
   },
 
   {
@@ -178,21 +192,31 @@ export const columnDashboard: ColumnDef<Events>[] = [
     cell: ({ row }) => {
       const data = row.original;
       const isApproved = data.user.length !== 0 ? true : false;
-
       const router = useRouter(); // Get the router
+      const { toast } = useToast()
+
 
       const { mutate: approvedButton } = useMutation({
         mutationFn: async () => {
+          // Display the toast message
+    
+      
+          // Perform the API call
           return axios.patch(`/api/approved/${data.id}`);
         },
         onError: (error) => {
           console.log(error);
         },
         onSuccess: () => {
+          toast({
+            title: "Successfully Approved",
+            description: `The title named "${data?.title}" has been successfully approved! `
+          });
           router.push("/admin");
           router.refresh();
         },
       });
+      
 
       const { mutate: doneButton } = useMutation({
         mutationFn: async () => {
@@ -202,6 +226,10 @@ export const columnDashboard: ColumnDef<Events>[] = [
           console.log(error);
         },
         onSuccess: () => {
+          toast({
+            title: "Done",
+            description: `The title named "${data?.title}" has been completly finished `
+          });
           router.push("/admin");
           router.refresh();
         },
@@ -215,6 +243,10 @@ export const columnDashboard: ColumnDef<Events>[] = [
           console.log(error);
         },
         onSuccess: () => {
+          toast({
+            title: "Change to Pending",
+            description: `The title named "${data?.title}" has been change to pending `
+          });
           router.push("/admin");
           router.refresh();
         },
@@ -228,7 +260,11 @@ export const columnDashboard: ColumnDef<Events>[] = [
           console.log(error);
         },
         onSuccess: () => {
-          router.push("/admin/calendar");
+          toast({
+            title: "Deleted successfully",
+            description: `The title named "${data?.title}" has been deleted permanently `
+          });
+          router.push("/admin");
           router.refresh();
         },
       });

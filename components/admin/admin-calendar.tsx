@@ -5,15 +5,14 @@ import {  columnsEvent } from "./datatable/admin-column";
 import { sampleEvent } from "@/sampleData";
 import {
   getData,
-  getDataHastDryRun,
+  getDataHasDryRun,
   getDataNotDryRun,
 } from "@/data-query/appointment";
 import { AdminCalendarSelection } from "./admin-calendar-selection";
 
 export const AdminCalendar = async () => {
   const data = await getData();
-
-  const dataHasDryRun = await getDataHastDryRun();
+  const dataHasDryRun = await getDataHasDryRun();
   const dataNoDryRun = await getDataNotDryRun();
 
   return (

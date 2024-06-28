@@ -10,6 +10,7 @@ import {
   zoomMeetingChoice,
   zoomWebinarChoice,
 } from "@/sampleData";
+import { MyDocument } from "../react-pdf";
 
 interface FinalizeFormProps {
   data: any;
@@ -172,6 +173,8 @@ const FinalizeForm = ({ data }: FinalizeFormProps) => {
             orientation="horizontal"
             className="my-2 w-full bg-slate-200"
           />
+
+            
         </div>
       </ScrollArea>
     </div>

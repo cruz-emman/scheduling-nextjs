@@ -26,10 +26,10 @@ type Props = {
 export const CardEvent = ({ data }: Props) => {
   return (
     <>
-      {data.map((event) => {
+      {data.map((event, index) => {
        
         return (
-          <Card>
+          <Card key={index} className="my-2 shadow-xl">
             <CardHeader>
               <CardTitle
               className={cn('text-xl')}

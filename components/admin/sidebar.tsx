@@ -1,4 +1,4 @@
-import { BarChart, Calendar, CalendarCheck, DeleteIcon, LayoutDashboard, Table2 } from "lucide-react";
+import { AppWindowIcon, BarChart, Calendar, CalendarCheck, DeleteIcon, LayoutDashboard, Table2 } from "lucide-react";
 import Link from "next/link";
 
 export const Sidebar = () => {
@@ -11,10 +11,11 @@ export const Sidebar = () => {
             <span>Dashboard</span>
           </li>
         </Link>
-        <Link href="/admin/calendar">
+        
+        <Link href="/admin/appointment">
           <li className="flex gap-x-2 cursor-pointer px-8 py-4 hover:bg-gray-100 ">
-            <Calendar />
-            <span>Calendar</span>
+            <AppWindowIcon />
+            <span>Appointment</span>
           </li>
         </Link>
         <Link href="/admin/result">
@@ -23,7 +24,7 @@ export const Sidebar = () => {
             <span>Result</span>
           </li>
         </Link>
-        <Link href="/admin/table">
+        <Link href="/admin/report">
           <li className="flex gap-x-2 cursor-pointer px-8 py-4 hover:bg-gray-100 ">
             <BarChart />
             <span>Overview Reports</span>

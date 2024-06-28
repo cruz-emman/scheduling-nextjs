@@ -3,7 +3,7 @@
 import { Calendar } from "@/components/ui/calendar";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
-import { format, formatDate, parse } from "date-fns";
+import { format, formatDate, parse, parseISO } from "date-fns";
 import {
   Dialog,
   DialogContent,
@@ -61,6 +61,13 @@ import { submitForm } from "@/actions/submit-form";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
+
+interface Props {
+  getCurrentDate?: any
+  currentData?: string
+  setCurrentData?: any
+}
+
 const steps = [
   {
     id: "Step 1",
@@ -110,7 +117,8 @@ const doesHaveTCETAssitanceOptions = [
   },
 ];
 
-export function CalendarPicker() {
+export function CalendarPicker({getCurrentDate, currentData, setCurrentData }:Props) {
+  
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [optionalDate, setOptionalDate] = useState<Date | undefined>(
     new Date()
@@ -168,19 +176,20 @@ export function CalendarPicker() {
   });
 
   const processForm = (values: z.infer<typeof formSchemaData>) => {
-    console.log(values);
     createPost(values);
 
     form.reset();
     setCurrentFormPage(0);
-    setDialogBox(false);
   };
 
   const openDialogBox = (currentDate: Date | undefined) => {
     if (currentDate) {
       setDate(currentDate);
-      const dateString = currentDate ? currentDate.toLocaleDateString() : ""; // Convert Date to string
-      form.setValue("dateOfEvent", dateString); // Set the value of dateOfEvent field in the form
+      const dateOnly = format(currentDate, 'yyyy-MM-dd');
+      setCurrentData(dateOnly)
+
+      // For next project, query function that will call a data once button is clicked
+      form.setValue("dateOfEvent", dateOnly); // Set the value of dateOfEvent field in the form
       setDialogBox(true);
     } else {
       setDate(currentDate);
@@ -327,12 +336,13 @@ export function CalendarPicker() {
   const convertDateToString = (currentDate: Date | undefined) => {
     if (currentDate) {
       setOptionalDate(currentDate);
-      const dryRunDate = currentDate ? currentDate.toLocaleDateString() : ""; // Convert Date to string
-      form.setValue("dryRunDate", dryRunDate); // Set the value of dateOfEvent field in the form
+      const dateOnly = format(currentDate, 'yyyy-MM-dd');
+      form.setValue("dryRunDate", dateOnly); // Set the value of dateOfEvent field in the form
     } else {
       setOptionalDate(currentDate);
     }
   };
+
 
   const handleMeetingTypeChange = (newMeetingType: any) => {
     form.setValue("meetingTypeOption", newMeetingType);
@@ -346,6 +356,8 @@ export function CalendarPicker() {
 
   const handleSubmit = () => {
     form.handleSubmit(processForm)();
+    setDialogBox(false);
+
   };
 
   const confirmAgreementFuntion = () => {
@@ -355,9 +367,11 @@ export function CalendarPicker() {
   return (
     <div className="flex flex-col h-full gap-y-2">
       {dialogBox && (
+
+
         <Dialog>
           <DialogTrigger asChild>
-            <Button color="primary-foreground">Add Schedule</Button>
+            <Button disabled={!dialogBox} color="primary-foreground">Add Schedule</Button>
           </DialogTrigger>
           <DialogContent
             className={cn("sm:max-w-[700px] sm:max-h-[900px]", {
@@ -425,13 +439,45 @@ export function CalendarPicker() {
                     <DialogHeader>
                       <DialogTitle>Purpose, Date and Time</DialogTitle>
                     </DialogHeader>
-                    <FormInputField
+                    <FormField
+                      control={form.control}
+                      name="dateOfEvent"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                          <FormLabel>Date of birth</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={"outline"}
+                                  className={cn(
+                                    "w-[240px] pl-3 text-left font-normal",
+                                    !field.value && "text-muted-foreground"
+                                  )}
+                                >
+                                  {field.value ? (
+                                    format(field.value, "PPP")
+                                  ) : (
+                                    <span>Pick a date</span>
+                                  )}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+
+                          </Popover>
+
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* <FormInputField
                       control={form.control}
                       name="dateOfEvent"
                       label="Date of Event (DD/MM/YYY)"
                       type="text"
                       disabled={true}
-                    />
+                    /> */}
 
                     <SeletGroupFieldInput
                       name="startingTime"
@@ -482,9 +528,9 @@ export function CalendarPicker() {
                               <FormItem className="flex items-center space-x-3 space-y-0">
                                 <FormControl>
                                   <RadioGroupItem
-                                                          onClick={handleClick}
+                                    onClick={handleClick}
 
-                                  value="false" />
+                                    value="false" />
                                 </FormControl>
                                 <FormLabel className="font-normal">
                                   None / No
@@ -520,7 +566,7 @@ export function CalendarPicker() {
                                                 className={cn(
                                                   "w-[240px] pl-3 text-left font-normal",
                                                   !field.value &&
-                                                    "text-muted-foreground"
+                                                  "text-muted-foreground"
                                                 )}
                                               >
                                                 {field.value ? (
@@ -602,15 +648,15 @@ export function CalendarPicker() {
                                         onCheckedChange={(checked) => {
                                           return checked
                                             ? field.onChange([
-                                                ...field.value,
-                                                item.id,
-                                              ])
+                                              ...field.value,
+                                              item.id,
+                                            ])
                                             : field.onChange(
-                                                field.value?.filter(
-                                                  (value: any) =>
-                                                    value !== item.id
-                                                )
-                                              );
+                                              field.value?.filter(
+                                                (value: any) =>
+                                                  value !== item.id
+                                              )
+                                            );
                                         }}
                                       />
                                     </FormControl>

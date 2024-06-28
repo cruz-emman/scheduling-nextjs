@@ -1,4 +1,4 @@
-import React from "react";
+'use server'
 import { AdminList } from "@/components/admin/admin-list";
 import { AdminOverView } from "@/components/admin/admin-overview";
 import {
@@ -8,9 +8,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { canceledEventThisMonth, confirmedEventThisMonth, doneEventThisMonth, pendingEventThisMonth } from "@/data-query/widget-results";
 import Image from "next/image";
 
-export const AdminContainer = () => {
+export const AdminContainer = async () => {
+
+  const confirmed = await confirmedEventThisMonth()
+  const pending = await pendingEventThisMonth()
+  const done = await doneEventThisMonth()
+  const canceledEvent = await canceledEventThisMonth()
+
+
   return (
     <>
       <div className="hidden flex-col md:flex w-full">
@@ -19,11 +27,11 @@ export const AdminContainer = () => {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Total Events
+                  Completed Events this month
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">8</div>
+                <div className="text-2xl font-bold">{done}</div>
               </CardContent>
             </Card>
 
@@ -48,14 +56,14 @@ export const AdminContainer = () => {
                 </svg>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">25</div>
+                <div className="text-2xl font-bold">{pending}</div>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Confirm Events this month
+                  Confirmed Events this month
                 </CardTitle>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -72,7 +80,7 @@ export const AdminContainer = () => {
                 </svg>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">25</div>
+                <div className="text-2xl font-bold">{confirmed}</div>
               </CardContent>
             </Card>
             <Card>
@@ -94,7 +102,7 @@ export const AdminContainer = () => {
                 </svg>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">25</div>
+                <div className="text-2xl font-bold">{canceledEvent}</div>
               </CardContent>
             </Card>
           </div>

@@ -29,19 +29,19 @@ export default auth((req) => {
     }
 
     
-    if(isAuthRoute){
-        if(isLoggedIn){
-            return Response.redirect(new URL("/auth/login", nextUrl))
-        }
+    // if(isAuthRoute){
+    //     if(isLoggedIn){
+    //         return Response.redirect(new URL("/auth/login", nextUrl))
+    //     }
 
-        return ;
-    }
+    //     return ;
+    // }
 
 
-    if(!isLoggedIn && !isPublicRoute){
-        return Response.redirect(new URL('/auth/login', nextUrl))
+    // if(!isLoggedIn && !isPublicRoute){
+    //     return Response.redirect(new URL('/auth/login', nextUrl))
         
-    }
+    // }
 
     return ;
   
